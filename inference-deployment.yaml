@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inference-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inference
+  template:
+    metadata:
+      labels:
+        app: inference
+    spec:
+      containers:
+      - name: inference-container
+        image: inference-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            cpu: "200m"
+          limits:
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
